@@ -27,7 +27,7 @@ As it can be seen from the image, the corner mask centers around the interest po
 
 Another observation is that possible watermarks can be present in the image (as seen above), which, of course, the mask detects (they are center pieces of the image, and the corner algorithm cannot determine that they have no real connection with the image).
 
-Furthermore, in some cases the watermark might contain all the points in the mask (as seen in Figure~\ref{fig:watermarkHarris}). To avoid such a behavior, the image is split into 9 sub images (three rows and three columns of identical dimensions) and the Harris mask is applied to each of these.
+Furthermore, in some cases the watermark might contain all (or at least a vast majority of) the points in the mask (as seen in Figure~\ref{fig:watermarkHarris}). To avoid such a behavior, I have split the image into 9 sub images (three rows and three columns of identical dimensions) and the Harris mask is applied to each of these.
 
 \begin{figure}[ht!]
 \centering
@@ -50,7 +50,7 @@ This determines the corner mask to also contain pixels from the center of the im
 
 \subsection{Using SIFT keypoints and descriptors}
 
-As we have seen, in ceva, the SIFT algorithm computes the keypoints of an image, and then computes descriptors for these keypoints. Due to the high similarity nature of our problem, we do not want to compute the keypoints for the entire image, but filter them based on the corner mask determined in the previous section (as observed in Figure~\ref{fig:messiSift} and Figure~\ref{fig:messiCornerSift})
+As we have seen, the SIFT algorithm computes the keypoints of an image, and then the descriptors of these keypoints. Due to the high similarity nature of our problem, we do not want to compute the keypoints for the entire image, but filter them based on the corner mask determined in the previous section (as observed in Figure~\ref{fig:messiSift} and Figure~\ref{fig:messiCornerSift})
 
 \begin{figure}[ht!]
 \centering
@@ -71,3 +71,23 @@ As we have seen, in ceva, the SIFT algorithm computes the keypoints of an image,
 The SIFT descriptors are then computed for each keypoint located in the corner mask and this will be the information stored for a certain image.
 
 \section{Analysis of a pair of images}
+
+In order to analyze a pair of images, we shall use the SIFT descriptors determined in the previous section. The two sets of descriptors are compared in order to obtain the best matches between pairs of keypoints. A distance is computed between each pair of keypoint descriptors, which is the Euclidian norm between the SIFT descriptors of the keypoints. Experimentally, I have concluded that a match between two keypoints has a high similarity if the Euclidian norm is less than $100$.\\
+For a pair of images, we first find the set of corner-mask keypoints and then compute the best matches between these keypoints. We shall keep only the best $10$ matches, and compute the arithmetic mean between the distances of these matches. As stated before, if this mean is smaller than $100$, the two images are considered similar. We shall name this algorithm the $pair\ similarity\ algorithm$.\\
+Figure~\ref{fig:compareImages} shows the corresponding matches between two images with two different watermarks, one of which is rotated $90^o$ clockwise.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=.8\linewidth]{images/compare.png}
+\caption{Comparison between two images}
+\label{fig:compareImages}
+\end{figure}
+ 
+ 
+\section{Analysis of a set of images}
+
+Suppose that we have a set of images, and we want to compare a test image with the set and detect whether we have a similar image within the set. Of course, the first possibility is the brut force one: we iterate through all the images and apply the $pair\ similarity\ algorithm$ described in the previous section. Although this provides a correct result, it has a complexity of $O(number\_of\_images * image\_match\_time)$. We shall name this basic algorithm as the $linear\ algorithm$. Although this algorithm is very straightforward, its complexity is undesirable if the number of images becomes large. Moreover, most of the images in our set will likely have a big similarity distance with our searched image, so maybe we don't want to apply the full $pair\ similarity\ algorithm$.\\
+Thus, we need to determine an efficient algorithm which can filter the initial set of images to a smaller set which contains very likely matching candidates with our test image.\\
+The filtering algorithm is implemented as follows: we will maintain a maximum number of $M$ descriptors for each image in the initial set and create a KD-tree with the set of descriptors of the initial images. When a query for a test image arrives, we will compute its descriptors and then perform a $N$ nearest-neighbor search on our KD-tree. Then we will select the top $T$ images with the most descriptors returned by the KD-tree and perform the $linear\ algorithm$. Experimentally, I have determined that the optimal values for $M$, the number of descriptors, $N$, the number of neighbors and $T$, the number of images is $40$, $5$ and $10$.
+ 
+ 
