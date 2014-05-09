@@ -4,30 +4,37 @@
 \usepackage{subcaption}
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
 
 \begin{document}
 
 \titleen{A scalable algorithm for similar image detection}
 \author{Andrei-Bogdan P\unichar{226}rvu}
 \date{iulie 2014}
-\adviser{Prof. Dr. Ing. Nicolae \unichar{538}\unichar{259}pu\c{s}}
+\adviser{\\Prof. Dr. Ing. Nicolae \unichar{538}\unichar{259}pu\c{s}\\Ing. \c{S}tefan-Teodor Cr\unichar{259}ciun}
 
 \input{templates/titlepage.en}
 
 \begin{abstract}
-Here we can write the abstract of this extraordinary paper
+In this paper, I propose an algorithm for detecting similar images in a large scale dataset, with the goal of obtaining a method of determining the occurrence of copyright infringement. I use the Harris corner detection and the SIFT keypoints and descriptors for analyzing the properties of an image, and then maintaining the data in a KD-tree structure for fast querying. I also describe the application architecture and the way the data should be distributed so that an efficient use of multiple machines can speed up the algorithm.
 \end{abstract}
 
 \tableofcontents
 
 \newpage
 
-%\chapter{Introduction}
+\include{chapters/Introduction}
 
 %\chapter{Related Work}
 
-%\chapter{Requirements}
-
 \include{chapters/Design}
 
+\include{chapters/Implementation}
+
+\include{chapters/Results}
+
+\include{chapters/Conclusions}
+
+\include{chapters/}
 \end{document}

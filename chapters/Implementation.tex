@@ -1,0 +1,58 @@
+\chapter{Architecture}
+\label{chap:implementation}
+
+\section{Basic structure}
+
+To illustrate the functionality of the described algorithm, I have designed a basic application which maintains a data base of images and, for a given query image, can retrieve the best match between
+the query and the image set.\\
+The basic structure of the application is shown in Figure~\ref{fig:basicStructure}: all the queries are received by the Front End Processor (FEP) and distributed to several image servers which will determine the most similar image, return it to the FEP which will in turn return it to the querying instance. There are several advantages of separating the image servers from the FEP. First of all, it allows load balancing: the FEP can maintain a queue of requests and the server with the least work to do can pick it up and process it. Secondly, it allows different types of image servers to be tested, by easily inserting and removing the image server module.\\
+The querying instance type is not particularly important, it can be either a simple web page or a browser extension (e.g. Google Chrome extension).
+
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=5em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=1.5cm,
+    minimum height=2em]
+
+\begin{figure}[ht!]
+\centering
+
+\begin{tikzpicture}[node distance = 2cm, baseline=1em]
+    % Place nodes   
+    \node [cloud] (query1) {image query};
+    \node [cloud, below of = query1] (query2) {image query};
+    \node [cloud, below of = query2] (query3) {image query};
+    \node [cloud, below of = query3] (query4) {image query};
+    \node [cloud, below of = query4] (query5) {image query};
+    \node [block, right of = query3, node distance = 5cm] (fep) {Front End Processor};
+    \node [block, right of = fep, node distance = 5cm] (server1) {Image Server};
+    \node [block, below of = server1] (server2) {Image Server};
+    \node [block, above of = server1] (server3) {Image Server};
+    % Draw edges
+    \path [line] (query1) -- (fep);
+    \path [line] (query2) -- (fep);
+    \path [line] (query3) -- (fep);
+    \path [line] (query4) -- (fep);
+    \path [line] (query5) -- (fep);
+    \path [line] (fep) -- (server1);
+    \path [line] (fep) -- (server2);
+    \path [line] (fep) -- (server3);
+    
+\end{tikzpicture}
+\caption{Basic structure}
+\label{fig:basicStructure}
+\end{figure}
+
+\section{Front End Processor}
+
+The FEP acts as a classical server. It uses socket communication in order to receive the queries and send them to the designated image server. When a response is received from the image server the FEP sends it back to the entity that has made the given query.
+
+\section{Image Server}
+
+\subsection{Linear Server}
+	The first type of server uses the $linear\ algorithm$ described in \nameref{chap:design}. It stores the list of images that form our database and applies the above mentioned algorithm when a given query arrives from the FEP.
+	
+\subsection{KD-tree Server}
+	The second type of server uses the $kdtree\ algorithm$ described in \nameref{chap:design}. At initialization time the server reads the list of images that comprise our database and applies the above mentioned algorithm. The resulting KD-tree is maintained in memory throughout the incoming queries and it it used to find the most similar image and return it to the FEP.

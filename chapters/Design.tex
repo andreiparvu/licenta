@@ -1,4 +1,5 @@
-\chapter{Design}
+\chapter{Design of the Algorithm}
+\label{chap:design}
 
 \section{Analysis of an image}
 
@@ -88,6 +89,6 @@ Figure~\ref{fig:compareImages} shows the corresponding matches between two image
 
 Suppose that we have a set of images, and we want to compare a test image with the set and detect whether we have a similar image within the set. Of course, the first possibility is the brut force one: we iterate through all the images and apply the $pair\ similarity\ algorithm$ described in the previous section. Although this provides a correct result, it has a complexity of $O(number\_of\_images * image\_match\_time)$. We shall name this basic algorithm as the $linear\ algorithm$. Although this algorithm is very straightforward, its complexity is undesirable if the number of images becomes large. Moreover, most of the images in our set will likely have a big similarity distance with our searched image, so maybe we don't want to apply the full $pair\ similarity\ algorithm$.\\
 Thus, we need to determine an efficient algorithm which can filter the initial set of images to a smaller set which contains very likely matching candidates with our test image.\\
-The filtering algorithm is implemented as follows: we will maintain a maximum number of $M$ descriptors for each image in the initial set and create a KD-tree with the set of descriptors of the initial images. When a query for a test image arrives, we will compute its descriptors and then perform a $N$ nearest-neighbor search on our KD-tree. Then we will select the top $T$ images with the most descriptors returned by the KD-tree and perform the $linear\ algorithm$. Experimentally, I have determined that the optimal values for $M$, the number of descriptors, $N$, the number of neighbors and $T$, the number of images is $40$, $5$ and $10$.
+The filtering algorithm is implemented as follows: we will maintain a maximum number of $M$ descriptors for each image in the initial set and create a KD-tree with the set of descriptors of the initial images. When a query for a test image arrives, we will compute its descriptors and then perform a $N$ nearest-neighbor search on our KD-tree. Then we will select the top $T$ images with the most descriptors returned by the KD-tree and perform the $linear\ algorithm$. Experimentally, I have determined that the optimal values for $M$, the number of descriptors, $N$, the number of neighbors and $T$, the number of images is $40$, $5$ and $10$. We shall name this algorithm the $kdtree\ algorithm$.
  
  
