@@ -6,6 +6,11 @@
 \usepackage[utf8x]{inputenc}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
+\usepackage{mathtools}
+
+\makeatletter
+    \setlength\@fptop{0\p@}
+\makeatother
 
 \begin{document}
 
@@ -26,7 +31,7 @@ In this paper, I propose an algorithm for detecting similar images in a large sc
 
 \include{chapters/Introduction}
 
-%\chapter{Related Work}
+\include{chapters/RelatedWork}
 
 \include{chapters/Design}
 
