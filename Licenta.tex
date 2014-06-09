@@ -14,20 +14,22 @@
 
 \begin{document}
 
-\titleen{A scalable algorithm for similar image detection}
+\titleen{A Scalable Algorithm for Similar Image Detection}
 \author{Andrei-Bogdan P\unichar{226}rvu}
 \date{iulie 2014}
 \adviser{\\Prof. Dr. Ing. Nicolae \unichar{538}\unichar{259}pu\c{s}\\Ing. \c{S}tefan-Teodor Cr\unichar{259}ciun}
 
 \input{templates/titlepage.en}
 
-\begin{abstract}
-In this paper, I propose an algorithm for detecting similar images in a large scale dataset, with the goal of obtaining a method of determining the occurrence of copyright infringement. I use the Harris corner detection and the SIFT keypoints and descriptors for analyzing the properties of an image, and then maintaining the data in a KD-tree structure for fast querying. I also describe the application architecture and the way the data should be distributed so that an efficient use of multiple machines can speed up the algorithm.
-\end{abstract}
-
 \tableofcontents
 
-\newpage
+\begin{abstract}
+In this paper, I propose an algorithm for detecting similar images in a large scale dataset, with the goal of obtaining a method of determining the appearance of copyright infringement. After considering various methods as invisible watermarking and image feature detection, I decided upon using the $Harris\ corner\ detection$ and the $Scale\ Invariant\ Feature\ Transform$ keypoints and descriptors for analyzing the properties of an image.\\
+In order to be able to handle a large amount of images and associated data, I have decided to maintain the descriptors of the images in a KD-tree structure for fast querying. This allows an initial filtering of the data set, reducing the number of images which should be analyzed. Thus, I will use two algorithms, one of which has a lower time complexity, but only gives semi-accurate results, and a second one, which performed a more in-depth analysis of the images.\\
+I will describe the mathematical aspects of the two mentioned algorithms, and I will describe the adjustments made to the algorithms in order to perform better on our given problem.\\
+The architecture of the application also important, because it highly influences the distribution of data, and how the algorithm performs on a large data set, with a high number of queries and possible updates on the initial image set. I will describe this architecture and the way the data should be distributed so that an efficient use of multiple machines can speed up the algorithm.\\
+
+\end{abstract}
 
 \include{chapters/Introduction}
 
