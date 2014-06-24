@@ -1,9 +1,16 @@
 \chapter{Conclusions}
 
-In this paper I have designed a scalable algorithm that is capable of detecting a highly similar images in a large database.\\
-I have succeeded in obtaining a small response time for querying the database in finding a highly similar image with a given one, maintaining at the same time a good quality of the responses.
+In this paper we have developed a scalable algorithm for finding similar images in a large database, using the Harris corner transformation, the SIFT descriptors and multiple KD-trees for storing the image data.\\
+We have designed a basic architecture for our service, consisting of a back-end side, formed by a Load Balancer, multiple Map Reducers and Image Servers, and a front-end side, represented by a Google Chrome extension.\\
+We have explored several metrics for selecting images out of the KD-trees and have analyzed how these different metrics influence the images returned by a query.\\
+We have analyzed the running time of the algorithm, varying the dimensions of the image database, the number of images stores inside a KD-tree, the number of KD-trees associated with a Image Server and the overall number of Image Serves. Also, we tested our service with a high number of queries and tried to reduce the overall running time by doing a parallel computation of the queries.\\
+We tested the service on a large number of images and already computed similarity sets and considered various metrics for testing the correctness of the query responses.\\
+In the end, we have succeeded in obtaining a service which implements a scalable algorithm that extracts similar images from a large dataset, providing good quality responses and a small running time. The main advantage of our algorithm is, beyond the small query time and quality of responses, the relatively reduced initialization time (computation of descriptors and construction of KD-trees). If using a neural network for object recognition, although the similarity would be rather a semantic one than a visual one, the training of the network would take a far longer time than our initialization process.
 
 \section {Further Work}
-	This algorithm can be further extended for handling a dynamic database, in which operations as adding and removing an image can be present along with the query operations previously described.\\
+	This algorithm can be further extended for handling a dynamic database, in which operations as adding and removing an image can be present along with the query operations previously described. Because of the fixed dimensions of the KD-trees, this insertion and removal should take a constant amount of time with respect to the overall number of images from the database.\\
 	Also, the structure and size of the KD-tree data structure can be further analyzed, in order to determine the moment in which new data should be used to create a new KD-tree. \\
-	The management and distribution of the queries between the FEP and the image server should be considered as a possible improvement, possibly establishing several filtering layers instead of a single one (as described in \nameref{chap:implementation}).
+	Testing the algorithm with different kind of descriptors (such as SURF or GIST), or with a descriptor compression algorithm \cite{descCompression}, can be a further research topic, in order to determine how they behave in our service, both as running time and as correctness.\\
+	This algorithm can also be used for automatic keywording. If all the images in our database have associated keywords, and we want to find possible keywords for a new image, we can use our algorithm to take the keywords of similar images and suggest them as possible ones of the new image.\\
+	Not least, we should increase the overall number of images from our database and distribute the Google Chrome extension to various people, so that they can test it with various images found on the Internet. The feedback receives from the users can help us see the possible weak spots of our algorithm, try to fix them and improve the overall results.
+	

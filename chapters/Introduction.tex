@@ -1,12 +1,12 @@
 \chapter{Introduction}
 
 Image processing has been a very important research domain the last years, the ever increasing number of images present on the Internet becoming more and more challenging to index, store and analyze.\\
-Privacy and copyright have also been big issues which have been discussed and assessed for a long time, major users in the photography industry wanting to know at all times when someone is using or modifying one of their photos.\\
-The problem discussed in this paper is considered a very difficult one, because the algorithm needs to provide both accurate results and have a decent running time. This is a continuous research problem and with a very high potential, so the study of such an algorithm can easily be extended and continued beyond this paper.
+Copyright infringement and image detection have also been big issues which have been discussed and studied for a long time, major users in the photography industry wanting to know at all times when someone is using or modifying one of their photos.\\
+The problem discussed in this paper is considered a very difficult one, because the algorithm needs to be at the same time accurate, fast and scalable.\\
 
 \section{Requirements}
 
-We want to design a scalable algorithm which can maintain a large set of images, and perform queries of finding a highly similar image with a given input one. \\
+Our goal was to design a scalable algorithm which can index information about a large set of images, and perform queries of finding a highly similar image with a given input one.\\
 The algorithm should be focused on copyright detection, so it should be able to determine if the input image is one of the images in the dataset, with possible transformations applied upon it:
 \begin{itemize}
 	\item watermarks

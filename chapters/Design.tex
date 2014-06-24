@@ -64,12 +64,34 @@ As we have seen, the SIFT algorithm computes the keypoints of an image, and then
 \begin{minipage}{.5\textwidth}
 	\centering
 	\includegraphics[width=.8\linewidth]{images/messiCornerSift.png}
-	\caption{SIFT keypoints for corner mask}
+	\caption{SIFT keypoints with\\ corner mask}
 	\label{fig:messiCornerSift}
 \end{minipage}
 \end{figure}
 
 The SIFT descriptors are then computed for each keypoint located in the corner mask and this will be the information stored for a certain image.
+
+\subsection{Using SURF keypoints and descriptors}
+
+As stated in \nameref{chap:relatedWork}, SURF descriptors have a similar performance as the SIFT ones, but are faster and have a lower dimensionality, so we might want to do a comparison between the two.
+In Figure~\ref{fig:messiSurf} and Figure~\ref{fig:messiCornerSurf} we can see an example of the SURF keypoints applied on the above image, and the corner-filtered SURF keypoints.
+
+\begin{figure}[ht!]
+\centering
+\begin{minipage}{.5\textwidth}
+	\centering
+	\includegraphics[width=.8\linewidth]{images/messiSurf.png}
+	\caption{SURF keypoints for the\\ entire image}
+	\label{fig:messiSurft}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+	\centering
+	\includegraphics[width=.8\linewidth]{images/messiCornerSurf.png}
+	\caption{SURF keypoints with\\ corner mask}
+	\label{fig:messiCornerSurf}
+\end{minipage}
+\end{figure}
+
 
 \section{Analysis of a pair of images}
 
@@ -87,8 +109,26 @@ Figure~\ref{fig:compareImages} shows the corresponding matches between two image
  
 \section{Analysis of a set of images}
 
-Suppose that we have a set of images, and we want to compare a test image with the set and detect whether we have a similar image within the set. Of course, the first possibility is the brut force one: we iterate through all the images and apply the $pair\ similarity\ algorithm$ described in the previous section. Although this provides a correct result, it has a complexity of $O(number\_of\_images * image\_match\_time)$. We shall name this basic algorithm as the $linear\ algorithm$. Although this algorithm is very straightforward, its complexity is undesirable if the number of images becomes large. Moreover, most of the images in our set will likely have a big similarity distance with our searched image, so maybe we don't want to apply the full $pair\ similarity\ algorithm$.\\
-Thus, we need to determine an efficient algorithm which can filter the initial set of images to a smaller set which contains very likely matching candidates with our test image.\\
-The filtering algorithm is implemented as follows: we will maintain a maximum number of $M$ descriptors for each image in the initial set and create a KD-tree with the set of descriptors of the initial images. When a query for a test image arrives, we will compute its descriptors and then perform a $N$ nearest-neighbor search on our KD-tree. Then we will select the top $T$ images with the most descriptors returned by the KD-tree and perform the $linear\ algorithm$. Experimentally, I have determined that the optimal values for $M$, the number of descriptors, $N$, the number of neighbors and $T$, the number of images is $40$, $5$ and $10$. We shall name this algorithm the $kdtree\ algorithm$.
+Suppose that we have a set of images, and we want to compare a test image with the set and detect whether we have a similar image within the set. Of course, the first possibility is the brut force one: we iterate through all the images and apply the $pair\ similarity\ algorithm$ described in the previous section.
+Although this provides a correct result, it has a complexity of $O(number\_of\_images * image\_match\_time)$. We shall name this basic algorithm as the $linear\ algorithm$. Although this algorithm is very straightforward, its complexity is undesirable if the number of images becomes large (i.e more than $500$).
+Moreover, most of the images in our set will likely have a big similarity distance with our searched image, so maybe we don't want to apply the full $pair\ similarity\ algorithm$.\\
+Thus, we need to determine an efficient algorithm which can filter the initial set of images to a smaller set which contains the best possible candidates in terms of visual similarity.\\
+The filtering algorithm is implemented as follows: we will maintain a maximum number of $M$ descriptors for each image in the initial set and create $P$ KD-trees with the set of descriptors of the initial images.
+When a query for a test image arrives, we will compute its descriptors and then perform a $K$ nearest-neighbor search on each of our KD-trees. Then we will select the top $T$ images returned from the nearest neighbor searches and perform the $linear\ algorithm$. We shall name this algorithm the $kdtree\ algorithm$.\\
+Of course, the important factors in the $kdtree\ algorithm$ are:
+\begin{itemize}
+	\item the values of the numbers $M$, $T$ and $K$ from the above description
+	\item the metric used in selecting the top $T$ images from the nearest-neighbor search
+	\item the metric used in selecting the $M$ descriptors from the input images to form the KD-tree
+	\item $N$, the number of images that form a KD-tree
+	\item $P$, the number of KD-trees, which can be determined from the total number of images and $N$.
+\end{itemize}
+
+We propose three metrics in for selecting the filtered images from the KD-tree based on the nearest-neighbor search:
+\begin{itemize}
+	\item the images with the largest number of descriptors returned from the search
+	\item the images with the smallest average of the distance of the found descriptors
+	\item the images with the largest distance between its descriptors and the average of all found descriptors (from all the images)
+\end{itemize}
  
- 
+For the initial attempts, we have set the values of $M$, $T$ and $K$ to $40$, $10$ and $5$ and used the largest number of found descriptors as metric for selecting the filtered images from the KD-tree.\\
