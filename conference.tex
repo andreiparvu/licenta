@@ -414,7 +414,7 @@ In order to be able to handle a large amount of images and associated data, we h
 
 \section{Introduction}
 Image processing has been a very important research domain the last years, the ever increasing number of images present on the Internet becoming more and more challenging to index, store and analyze.\\
-Copyright infringement and image detection have also been big issues which have been discussed and assessed for a long time, major users in the photography industry wanting to know at all times when someone is using or modifying one of their photos.\\
+Copyright infringement and image detection have also been big issues which have been discussed and studied for a long time, major users in the photography industry wanting to know at all times when someone is using or modifying one of their photos.\\
 The problem discussed in this paper is considered a very difficult one, because the algorithm needs to be at the same time accurate, fast and scalable. \\
 
 Our goal was to design a scalable algorithm which can index information about a large set of images, and perform queries of finding a highly similar image with a given input one. \\
@@ -527,8 +527,19 @@ We propose three metrics in for selecting the filtered images from the KD-tree b
 	\item the images with the largest distance between its descriptors and the average of all found descriptors (from all the images)
 \end{itemize}
 
+The main problem when storing the descriptors in the KD-tree is in what form to have the images during the computation. We have three possibilities:
+\begin{itemize}
+	\item keep them in the original size
+	\item resize all the images to a fixed dimension (eg. 400 × 300)
+	\item resize all the images to a fixed width and scale the height
+\end{itemize}
+
 For the initial attempts, we have set the values of $M$, $T$ and $K$ to $40$, $10$ and $5$ and used the largest number of found descriptors as metric for selecting the filtered images from the KD-tree.\\
 
+\subsection{Architecture of the application}
+The basic structure of our application is maintaining a set of Image Servers, each containing a number of $R$ KD-trees to use for quering.
+Thus, when a query arrives, we shall use a map-reduce technique: the query is distributed among the Image Servers, which compute the most similar images from their associated KD-tress and send the results back to a special entity called the Map Reducer. The Map Reducer combines these results, takes the best ones and sends them back to the quering entity.
+ 
 \section{Data Set and Testing}
 
 We have collected a set of $4500$ images from the Internet, which we have classified in about $1600$ similarity sets, each set being composed of up to five images. The images within a similarity set differ in size, having various watermarks and filters applied (these sets are known to be correct beforehand). We have inserted these images in a larger set of $100.000$ images taken from the Internet and performed a queries for each of the $4500$ images of the similarity sets, getting the top $10$ similar images. We want to observe:
@@ -566,6 +577,55 @@ The second table shows the $index\ score$ (described above) for the same queries
 \end{tabular}
 
 It can be observed that the third metric, the largest distance from the descriptors of an image to the average of all found descriptors, provides the best results.\\
+
+We computed the descriptors for images resized to a fixed value (height $400$ and width $300$), and analyzed the same metrics and scores described above. The results can be seen in the tables below,
+and they confirm that this image storing performs worse than the aspect-ratio one, so we have decided to continue using the first one.\\
+
+\begin{tabular} {c | c | c | c}
+	& max nr descs & min avg & max dist to avg \\
+	\hline
+	3 & 2.69 & 2.08 & 2.73 \\
+	\hline
+	4 & 3.55 & 2.60 & 3.62 \\
+	\hline
+	5 & 4.17 & 2.80 & 4.32 \\
+\end{tabular}
+
+\begin{tabular} {c | c | c | c}
+	& max nr descs & min avg & max dist to avg \\
+	\hline
+	3 & 6.32 & 11.93 & 5.97 \\
+	\hline
+	4 & 10.37 & 18.46 & 9.84 \\
+	\hline
+	5 & 16.8 & 28.35 & 15.67 \\
+\end{tabular}
+
+As stated in \nameref{section:algorithm}, we decided to maintain multiple KD-trees in one Image Server in order to improve the quality of the heuristic search on one such KD-tree and reduce the total number of processes.\\
+On the same set of $100.000$ images, we created $P=40$ Image Servers, with each server having $5000$ images and $R=2$ KD-trees (that means $N=2500$ images per KD-tree), so that we could compare the $correctness\ scores$ between this implementation and the one with $R=1$.\\
+These are shown in the tables below:\\
+
+\begin{tabular} {c | c | c | c}
+	& max nr descs & min avg & max dist to avg \\
+	\hline
+	3 & 2.86 & 2.5 & 2.87 \\
+	\hline
+	4 & 3.83 & 3.35 & 3.85 \\
+	\hline
+	5 & 4.6 & 4.75 & 4.62 \\
+\end{tabular}
+
+\begin{tabular} {c | c | c | c}
+	& max nr descs & min avg & max dist to avg \\
+	\hline
+	3 & 4.76 & 8.03 & 4.70 \\
+	\hline
+	4 & 7.96 & 11.92 & 7.82 \\
+	\hline
+	5 & 13.56 & 20.35 & 13.49 \\
+\end{tabular}
+
+It can be seen that the scores are comparable with the ones obtained from running the algorithm it the two cases shown in the previous subsections, so it can be confirmed that using multiple KD-trees of a fixed (and lesser size) is in our advantage when the overall dataset becomes larger, in order to avoid a large number of Image Servers.
 
 Also, we have constructed a single KD-tree which contains the $4500$ images from the similarity set in order to test the three different metrics described in \nameref{section:algorithm} for selecting the filtered images.\\
 We retained the $image\ pair\ score$ of the returned similar images, and evaluated these three metrics by computing the following $correctness\ scores$:
@@ -613,6 +673,22 @@ In Figure~\ref{fig:totalInit} we can see the total initialization time for a KD-
 	3000 & 167.83 & 24.31 \\
 	5000 & 280.67 & 41.20 \\
 \end{tabular}
+
+We analyzed how a certain KD-tree Image Server with a varying number of linear processed KD-trees performs when submitting a query, in order to determine a viable value for the $R$ parameter (the number of KD-trees that form a KD-tree Image Server).\\
+In the table below we can observe the running time per query as we increase the number of KD-trees for with $N=2500$ images.\\
+
+\begin{tabular}{c | c}
+  $R$, number of KD-trees & running time (seconds) \\
+  \hline
+  2 & 2.45 \\
+  3 & 2.75 \\
+  5 & 2.84 \\
+  10 & 3.01 \\
+  20 & 3.44 \\
+  40 & 4.41 \\
+\end{tabular}
+
+By looking at these running times, we can determine that we can easily increase the number of KD-trees per Image Server, as long as we maintain a decent number of images as input for the $linear\ algorithm$, which is used after the actual KD-tree search.\\
 
 Because the total number of images is divided into KD-trees of fixed dimension (in our case $5000$ images), inserting a new image into our database is constant, because it just implies creating a new KD-tree (or expanding a current one, if its dimension doesn't exceed $5000$ images).
 
