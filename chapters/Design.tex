@@ -5,7 +5,8 @@
 
 \subsection{Using Harris corner detector}
 The analysis of an image begins with applying the Harris detector on it. It will compute a given score for each pixel of the image, the higher the score, the greater the chance that pixel represents a corner.\\
-Using these values we will have to determine a subset of pixels that will represent the Harris mask of the image. Experimentally, I have established that all the points which have a value greater than $0.01 * max\_image\_value$ are to be part of the subset.\\
+Using these values we will have to determine a subset of pixels that will represent the Harris mask of the image.
+Experimentally, we have established that all the points which have a value greater than $0.01 * max\_image\_value$ are to be part of the subset.\\
 As an example, Figure~\ref{fig:beforeHarris} shows a normal image of a woman's face, while Figure~\ref{fig:afterHarris} shows the corresponding pixels that form the corner mask. \\
 
 \begin{figure}[ht!]
@@ -47,6 +48,8 @@ Furthermore, in some cases the watermark might contain all (or at least a vast m
 \end{figure}
 
 This determines the corner mask to also contain pixels from the center of the image (some of which, unfortunately, are also a watermark).
+This partitioning scheme can be further extended by having a weighted selection of corner points: a larger number from the center of the image (where the interest point is) and a
+smaller one from the corners.
 
 
 \subsection{Using SIFT keypoints and descriptors}
@@ -82,7 +85,7 @@ In Figure~\ref{fig:messiSurf} and Figure~\ref{fig:messiCornerSurf} we can see an
 	\centering
 	\includegraphics[width=.8\linewidth]{images/messiSurf.png}
 	\caption{SURF keypoints for the\\ entire image}
-	\label{fig:messiSurft}
+	\label{fig:messiSurf}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 	\centering
@@ -95,7 +98,10 @@ In Figure~\ref{fig:messiSurf} and Figure~\ref{fig:messiCornerSurf} we can see an
 
 \section{Analysis of a pair of images}
 
-In order to analyze a pair of images, we shall use the SIFT descriptors determined in the previous section. The two sets of descriptors are compared in order to obtain the best matches between pairs of keypoints. A distance is computed between each pair of keypoint descriptors, which is the Euclidian norm between the SIFT descriptors of the keypoints. Experimentally, I have concluded that a match between two keypoints has a high similarity if the Euclidian norm is less than $100$.\\
+In order to analyze a pair of images, we shall use the SIFT descriptors determined in the previous section.
+The two sets of descriptors are compared in order to obtain the best matches between pairs of keypoints.
+A distance is computed between each pair of keypoint descriptors, which is the Euclidian norm between the SIFT descriptors of the keypoints.
+Experimentally, we have concluded that a match between two keypoints has a high similarity if the Euclidian norm is less than $100$.\\
 For a pair of images, we first find the set of corner-mask keypoints and then compute the best matches between these keypoints. We shall keep only the best $10$ matches, and compute the arithmetic mean between the distances of these matches. As stated before, if this mean is smaller than $100$, the two images are considered similar. We shall name this algorithm the $pair\ similarity\ algorithm$.\\
 Figure~\ref{fig:compareImages} shows the corresponding matches between two images with two different watermarks, one of which is rotated $90^o$ clockwise.
 

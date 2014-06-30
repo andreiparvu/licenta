@@ -96,7 +96,7 @@ where PORT_FRONT is the port on which the queries are received and PORT_BACK is 
 
 \section{Map Reducer}
 
-The Map Reducer maintains a set of connections to a number of associated Image Servers to which it broadcasts a received query. The Map Reducer waits for the response from the servers (in the meantime it does not process other queries), and combines the received results, by selecting the images with the highest $image\ pair\ score$ from all the images returned by the Image Servers.\\
+The Map Reducer maintains a set of connections with a number of associated Image Servers to which it broadcasts a received query. The Map Reducer waits for the response from the servers (in the meantime it does not process other queries), and combines the received results, by selecting the images with the highest $image\ pair\ score$ from all the images returned by the Image Servers.\\
 
 \begin{lstlisting}[language=python, caption=Map Reducer pseudocode]
 while (true):
@@ -239,10 +239,11 @@ We maintain a Redis server \cite{redis} on a machine which stores all the urls a
 
 \subsection{Process Communication}
 
-For the process communication, we opted to use sockets so that the various servers can reside on different machines. ZeroMQ sockets \cite{zeromq} looked liked the best option, because of their robustness, small running time, auto-handling of connection failures and multiple types.\\
+For the process communication, we opted to use sockets so that the various servers can reside on different machines.
+ZeroMQ sockets \cite{zeromq} looked liked the best option, because of their robustness, small running time, auto-handling of connection failures and multiple types.\\
 The ZeroMQ sockets that we used in our service are:
 \begin{itemize}
-	\item ROUTER-DEALER. We used this pair of sockets to implement the Load Balancer. The ROUTER socket can accept multiple connections, add a header to the message, to remember which of the connected clients sent it and forwards it to the DEALER.\\
+	\item ROUTER-DEALER. We used this pair of sockets to implement the Load Balancer. The ROUTER socket accepts multiple connections, adds a header to the message, to remember which of the connected clients sent it, and forwards it to the DEALER.\\
 	The DEALER receives the messages from the ROUTER and distributes them in a round-robin fashion to all the connected clients (which in fact are the Map Reducers). When a reply comes to the DEALER, it forwards it to the ROUTER, which, by inspecting the message's header, identifies the original client and sends it back.
 	\item REP. The Map Reducer maintains this type of socket in its communication with the Load Balancer. It allows consecutive operations of receive and send, which suits very well our "receive query - send answer" protocol
 	\item PUB-SUB. This pair of sockets forms the connection between a Map Reducer and its associated Image Servers.

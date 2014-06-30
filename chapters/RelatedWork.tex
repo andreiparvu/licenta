@@ -10,13 +10,13 @@ We have focused on two main algorithms, the $Harris\ corner\ detector$ and the $
 The main idea of the $Harris\ corner\ detector$ \cite{harrisCorner}, \cite{harrisCorner2} algorithm is that, given an input image, the most predominant features that a human eye recognizes and memorizes are corners. A corner is considered to be an intersection of two edges, so, selecting a small area around the point and shifting it should result in a large variation in the intensity of the pixels in that area. \\
 Therefore, each area in an image can be classified in three categories:
 \begin{itemize}
-	\item flat, in which intensities do not vary in either direction (as see in Figure~\ref{fig:flatArea})
-	\item edge, in which intensities don't vary in the direction of the edge (as see in Figure~\ref{fig:edgeArea})
-	\item corner, in which intensities vary in all directions (as see in Figure~\ref{fig:cornerArea})
+	\item flat, in which intensities do not vary in either direction (as seen in Figure~\ref{fig:flatArea})
+	\item edge, in which intensities don't vary in the direction of the edge (as seen in Figure~\ref{fig:edgeArea})
+	\item corner, in which intensities vary in all directions (as seen in Figure~\ref{fig:cornerArea})
 \end{itemize}
 
 In order to determine in which category a certain area with a size of $(w, h)$ belongs to, we will compute the variation of intensity: $E(w, h) = \sum_{x, y} w(x, y) * [I(x + w, y + h) - I(x, y)]^2$, where $w$ is a window function, which assigns weights to pixels, and $I$ is the intensity of a certain pixel of the grayscale image.\\
-In order to determine the corner areas, we have to maximize the function $\sum_{x, y}[I(x + w, y + v) - I(x, y)]^2$, which using $Taylor$ expansion and representing in a matrix form can be written as
+In order to determine the corner areas, we have to maximize the function $\sum_{x, y}[I(x + w, y + v) - I(x, y)]^2$, which, using $Taylor$ expansion and representing in a matrix form, can be written as
 $E(w, h) \approx
 \begin{bmatrix}
 w & h
@@ -75,7 +75,9 @@ Because the $LoG$ has a high computational cost, it is approximated with a Diffe
 
 \subsection{Computing the Descriptors}
 Once we have the keypoints, we have to compute a unique fingerprint for a given keypoint, which should be invariant to scaling, rotation and luminance \cite{siftImplementation}.\\
-A $16\times16$ window is selected around a keypoint, which is divided into $16$ $4\times4$ blocks. In each of these blocks, the gradient magnitude and orientation is computed for each of the $16$ elements. These gradients are then inserted in a $8$ bin histogram. The histogram is computed using the following principles:
+A $16\times16$ window is selected around a keypoint, which is divided into $16$ $4\times4$ blocks.
+In each of these blocks, the gradient magnitude and orientation are computed for each of the $16$ elements.
+These gradients are then inserted in an $8$ bin histogram. The histogram is computed using the following principles:
 \begin{enumerate}
 	\item the gradients are placed in the corresponding bin after their orientation: a gradient in range $0^o-44^o$ is placed in the first bin, a gradient in range $45^o-89^o$ is placed in the second, etc.
 	\item the value added to the corresponding bin depends on the gradient magnitude
@@ -105,7 +107,7 @@ These values are then normalized, and the descriptor of the current keypoint is 
 
 \section{Speeded Up Robust Features}
 
-SURF (Speeded Up Robust Features) is an algorithm, which was introduced in 2006 as a speeded-up version of SIFT \cite{surf}. Insead of approximating the Laplacian of Gaussian with Difference of Gaussian, as SURF does, It approximates it with the Box Filter.\\
+SURF (Speeded Up Robust Features) is an algorithm which was introduced in 2006 as a speeded-up version of SIFT \cite{surf}. Insead of approximating the Laplacian of Gaussian with Difference of Gaussian, as SURF does, It approximates it with the Box Filter.\\
 It uses wavelet responses \cite{haarWavelet}, \cite{haarWavelet2} on the X and Y axes to determine orientation assignment, which are plotted in a 2D space and summed up in a sliding window of $60^o$.\\
 The wavelet responses are used again to compute the descriptors for the keypoints: a 4-dimensional vector $(\sum{d_x}, \sum{d_y}, \sum{|d_x|}, \sum{|d_y|})$ is computed for each block of size 4x4, thus obtaining a final descriptor of size 64.\\
 We were interested in this descriptor, because of its similar performance with the SIFT descriptor, but lower dimension and faster computation.\\

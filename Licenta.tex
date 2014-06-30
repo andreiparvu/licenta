@@ -1,9 +1,8 @@
 \documentclass[a4paper,5pt]{thesis.cs.pub.ro}
+%%!TEX encoding = UTF-8 Unicode
 
 \usepackage{graphicx}
 \usepackage{subcaption}
-\usepackage{ucs}
-\usepackage[utf8x]{inputenc}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,matrix}
 \usepackage{mathtools}
@@ -14,19 +13,22 @@
     \setlength\@fptop{0\p@}
 \makeatother
 
+\AtBeginDocument{\renewcommand{\bibname}{Bibliography}}
+
 \begin{document}
 
 \titleen{A Scalable Algorithm for Similar Image Detection}
-\author{Andrei-Bogdan P\unichar{226}rvu}
-\adviser{\\Prof. Dr. Ing. Nicolae \unichar{538}\unichar{259}pu\c{s}\\Ing. \c{S}tefan-Teodor Cr\unichar{259}ciun}
+\author{Andrei-Bogdan Pârvu}
+\adviser{\\Prof. Dr. Ing. Nicolae Țăpuș\\Ing. Ștefan-Teodor Crăciun}
 \date{July 2014}
 
 \input{templates/titlepage.en}
+\input{templates/titlepage.ro}
 
 \begin{acknowledgements}
 \vspace*{7cm}
 \begin{center}
-\parbox{10cm}{First of all, I would like to thank Professor \unichar{538}\unichar{259}pu\c{s} for his support throughout the years since we have met and for his assistance and advice in writing this thesis. Also, I would like to thank my colleagues at Adobe Systems Romania, especially \c{S}tefan Cr\unichar{259}ciun and Virgil Palanciuc, who have provided continuous feedback and suggestions, and have stood beside me during my work.}
+\parbox{10cm}{First of all, I would like to thank Professor Țăpuș for his support throughout the years since we have met and for his assistance and advice in writing this thesis. Also, I would like to thank my colleagues at Adobe Systems Romania, especially Ștefan Crăciun and Virgil Palanciuc, who have provided continuous feedback and suggestions, and have stood beside me during my work.}
 \end{center}
 \vspace{0.3cm}
 \begin{center}

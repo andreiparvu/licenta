@@ -88,7 +88,7 @@ performs worse than the aspect-ratio one, so we have decided to continue using t
 \subsection{Varying the number of images per KD-tree}
 
 We also wanted to see how the number of images within a KD-tree influences the above metrics,
-so we separated the $100.000$ images into $P=40$ KD-trees, each of then storing $2500$ images.
+so we separated the $100.000$ images into $P=40$ KD-trees, each of them storing $2500$ images.
 We applied the same correctness test described above, the average number of found images and the $index\ score$ is shown in the tables below.\\
 
 \begin{table}[H]
@@ -162,11 +162,11 @@ These are shown in the tables below:\\
 \begin{tabular} {c | c | c | c}
 	& max nr descs & min avg & max dist to avg \\
 	\hline
-	3 & 2.86 & 2.5 & 2.87 \\
+	3 & 2.86 & 2.5 & 2.89 \\
 	\hline
-	4 & 3.83 & 3.35 & 3.85 \\
+	4 & 3.83 & 3.35 & 3.86 \\
 	\hline
-	5 & 4.6 & 4.75 & 4.62 \\
+	5 & 4.6 & 4.75 & 4.66 \\
 \end{tabular}
 \caption{Average number of found images for $P=40$, $N=2500$ and $R=2$}
 \end{table}
@@ -176,9 +176,9 @@ These are shown in the tables below:\\
 \begin{tabular} {c | c | c | c}
 	& max nr descs & min avg & max dist to avg \\
 	\hline
-	3 & 4.76 & 8.03 & 4.70 \\
+	3 & 4.76 & 8.03 & 4.67 \\
 	\hline
-	4 & 7.96 & 11.92 & 7.82 \\
+	4 & 7.96 & 11.92 & 7.78 \\
 	\hline
 	5 & 13.56 & 20.35 & 13.49 \\
 \end{tabular}
@@ -323,8 +323,8 @@ We illustrate this overall running time in Figure~\ref{fig:overallTime}, where e
 	10 & 3.24\\
 	20 & 3.53\\
 	40 & 5.50\\
-	600 & 6.38\\
-	800 & 8.23\\
+	60 & 6.38\\
+	80 & 8.23\\
 	100 & 8.74\\
 \end{tabular}
 \caption{Execution time for increasing number of KD-tree servers}
@@ -342,7 +342,7 @@ We illustrate this overall running time in Figure~\ref{fig:overallTime}, where e
 
 As stated in \nameref{chap:implementation}, in order to be able to handle a large number of queries at the same time, the KD-tree servers are multi-threaded, with each separate thread being connected to a different Map Reducer and, thus, being able to support multiple queries simultaneously.\\
 Table \ref{table:threadTime} shows the running time for a number of $10$ KD-tree servers, each with $2500$ images and respective number of threads and queries.\\
-It can be easily observed that there is a big running time improvement when the number of queries gets bigger and the number of threads increases. In the case of a smaller number of queries, an bigger number of threads does not improve the running time, partially because of the overhead caused by the creation of multiple threads and the overhead of multiple Map Reducers and synchronization between them. \\
+It can be easily observed that there is a big running time improvement when the number of queries gets bigger and the number of threads increases. In the case of a smaller number of queries, a bigger number of threads does not improve the running time, partially because of the overhead caused by the creation of multiple threads and the overhead of multiple Map Reducers and synchronization between them. \\
 Also, because a service with a large number of images will have a considerable amount of Image Servers running (and, implicitly, number of processes), creating more threads will certainly increase the load of the system and not have the desired effect.\\
 Inside an Image Server, the KD-tree structure is shared between processes, so, during multiple queries done by multiple threads, the nearest neighbor search performed on the KD-tree may be
 a computational bottle neck, all the threads accessing the same data structure.
@@ -366,8 +366,8 @@ To avoid this, in case we use multiple KD-trees inside the same Image Server, it
 
 \subsection{Multiple KD-trees per Image Server}
 
-We analyzed how a certain KD-tree Image Server with a varying number of linear processed KD-trees is performs when submitting a query, in order to determine a viable value for the $R$ parameter (the number of KD-trees that form a KD-tree Image Server).\\
-In Figure~\ref{fig:multipleKDTrees} and in Table \ref{table:multipleKDTrees} we can observe these running times as we increase the number of KD-trees for with $N=2500$ images.\\
+We analyzed how a certain KD-tree Image Server with a varying number of linear processed KD-trees performs when submitting a query, in order to determine a viable value for the $R$ parameter (the number of KD-trees that form a KD-tree Image Server).\\
+In Table \ref{table:multipleKDTrees} we can observe the running time per query as we increase the number of KD-trees for with $N=2500$ images.\\
 
 \begin{table}[H]
 \centering
