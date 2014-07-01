@@ -48,7 +48,7 @@
 \usepackage{hyperref}
 \hypersetup{%
 	colorlinks=true,
-	linkcolor=blue,
+	linkcolor=black,
 	anchorcolor=black,
 	citecolor=black,
 	filecolor=blue,

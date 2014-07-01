@@ -367,7 +367,7 @@ To avoid this, in case we use multiple KD-trees inside the same Image Server, it
 \subsection{Multiple KD-trees per Image Server}
 
 We analyzed how a certain KD-tree Image Server with a varying number of linear processed KD-trees performs when submitting a query, in order to determine a viable value for the $R$ parameter (the number of KD-trees that form a KD-tree Image Server).\\
-In Table \ref{table:multipleKDTrees} we can observe the running time per query as we increase the number of KD-trees for with $N=2500$ images.\\
+In Figure~\ref{fig:multipleKDTrees} and in Table \ref{table:multipleKDTrees} we can observe the running time per query as we increase the number of KD-trees for with $N=2500$ images.\\
 
 \begin{table}[H]
 \centering
@@ -384,6 +384,13 @@ In Table \ref{table:multipleKDTrees} we can observe the running time per query a
 \caption{Running time with various number of KD-trees per KD-tree Image Server}
 \label{table:multipleKDTrees}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.8\linewidth]{images/multipleKDTrees.png}
+\caption{Running time with various number of KD-trees per KD-tree Image Server}
+\label{fig:multipleKDTrees}
+\end{figure}
 
 By looking at these running times, we can determine that we can easily increase the number of KD-trees per Image Server, as long as we maintain a decent number of images as input for the $linear\ algorithm$, which is used after the actual KD-tree search.\\
 

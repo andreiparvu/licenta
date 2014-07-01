@@ -14,13 +14,19 @@
 \makeatother
 
 \AtBeginDocument{\renewcommand{\bibname}{Bibliography}}
+\AtBeginDocument{\renewcommand{\figurename}{Figure}}
+\AtBeginDocument{\renewcommand{\tablename}{Table}}
+\AtBeginDocument{\renewcommand{\contentsname}{Content}}
+\AtBeginDocument{\renewcommand{\chaptername}{Chapter}}
 
 \begin{document}
 
 \titleen{A Scalable Algorithm for Similar Image Detection}
+\titlero{Algoritm Scalabil pentru Detecția Imaginilor Similare}
 \author{Andrei-Bogdan Pârvu}
 \adviser{\\Prof. Dr. Ing. Nicolae Țăpuș\\Ing. Ștefan-Teodor Crăciun}
-\date{July 2014}
+\titlefooteren{Bucharest, 2014}
+\titlefooterro{București, 2014}
 
 \input{templates/titlepage.en}
 \input{templates/titlepage.ro}
@@ -48,6 +54,8 @@ Thus, we will use two algorithms, one of which has a lower time complexity, but 
 We will describe the mathematical aspects of the two mentioned algorithms, and the adjustments made to the algorithms in order to perform better on our given problem.\\
 The architecture of the application also important, because it highly influences the distribution of data, and how the algorithm performs on a large data set, with a high number of queries and possible updates on the initial image set.
 We will detail this architecture and the way the data should be distributed so that an efficient use of multiple machines can speed up the algorithm.\\
+\\
+\textbf{Keywords:} image similarity, Harris corner detector, SIFT keypoints and descriptors, KD-trees
 
 \end{abstract}
 
@@ -87,6 +95,14 @@ C Harris, M Stephens, \emph{A combined corner and edge detector}, 1988
 P. Porwik, A. Lisowska, \emph{The Haar–Wavelet Transform in Digital Image Processing: Its Status and Achievements}, 2004
 \bibitem{haarWavelet2}
 E. J. Stollnitz, T. D. DeRose, D. H. Salesin, \emph{Wavelets for Computer Graphics}
+\bibitem{duplicateDetection}
+B. Thomee, M.J. Huiskes, E. M. Bakker, M. S. Lew, \emph{An Evaluation of Content-Based Duplicate Image Detection Methods for Web Search}, 2013
+\bibitem{similaritySearch}
+B. Stein, S. Meyer zu Eissen, \emph{Fingerprint-based Similarity Search and its Applications}
+\bibitem{compactDataStructures}
+Q. Lv, M. Charikar, K. Li, \emph{Image Similarity Search with Compact Data Structures}\
+\bibitem{copyDetection}
+B. Thomee, M. J. Huiskes, E. Bakker, M. S. Lew, \emph{Large Scale Image Copy Detection Evaluation}
 \bibitem{opencv}
 Open Source Computer Vision Library, \emph{http://opencv.org/}
 \bibitem{redis}
