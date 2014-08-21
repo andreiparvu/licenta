@@ -353,13 +353,13 @@
 % 
 
 \author{
-\IEEEauthorblockN{Andrei-Bogdan Pârvu}
+\IEEEauthorblockN{Andrei-Bogdan Parvu}
 \IEEEauthorblockA{Computer Science and Engineering Department\\
 Faculty of Automatic Control and Computers \\
 POLITEHNICA University of Bucharest\\
 Email: andrei.parvu@cti.pub.ro}
 \and
-\IEEEauthorblockN{Nicolae Țăpuș}
+\IEEEauthorblockN{Nicolae Tapus}
 \IEEEauthorblockA{Computer Science and Engineering Department\\
 Faculty Automatic Control and Computers \\
 POLITEHNICA University of Bucharest\\
@@ -368,7 +368,7 @@ Email: nicolae.tapus@cs.pub.ro}\\
 \IEEEauthorblockA{Adobe Systems Romania\\
 Email: virgilp@adobe.com}
 \and
-\IEEEauthorblockN{Ștefan-Teodor Crăciun}
+\IEEEauthorblockN{Ștefan-Teodor Craciun}
 \IEEEauthorblockA{Adobe Systems Romania\\
 Email: scraciun@adobe.com} 
 }
@@ -429,10 +429,36 @@ The algorithm should be focused on copyright detection, so it should be able to 
 As said above, the granularity of the algorithm should be set so that it should be able to distinguish between two lightly similar images (e.g. two different pictures of the Eiffel Tower, made by two different persons) and two images, one of which is obtained from the other.\\
 
 The speed and scalability of the algorithm are also major factors which should be seriously taken into consideration. It should be able to handle a large number of queries and provide a small response-time per query. Of course, there is a close connection between the running time of the algorithm and its precision, connection which should be closely analyzed in order to create a balance between the two.
- 
+
 \hfill June 2014
 
 \section{Previous Work}
+
+During the first phase of our research, we collected about $4500$ images from the Internet (various stock photography sites), which we classified into similarity sets. The images comprising a similarity set should be roughly the same, with differences only in size, rotation and various applied
+watermarks.\\
+We searched for a simple, fast to implement method of doing this, before diving into something more elaborate.
+We decided to compute a 64-bit hash for each image, and then use the Hamming distance between two hashes to measure the degree
+to similarity between the images. The three types of hashes that we computed and analyzed are:
+\begin{itemize}
+  \item average hash: reduce the image to a $8\times8$ grayscale; each bit in the 64-bit hash will be either 0, if the corresponding
+  pixel value is lower than the average of all pixels' values, or, in the other case, 1.
+  \item perceptive hash: similar with the average hash, but instead of comparing the pixel values it used the Discrete Cosine Transform
+  for the image.
+  \item difference hash: reduce the image to a $9\times8$ grayscale; compute the difference between each horizontally adjacent pixels and
+  set the corresponding bit in the hash to 1, if the difference is smaller than 0, or to 1 otherwise.
+\end{itemize}
+
+For checking if a given image is present in our set of already stored images, we just compute one of its hashes (average, perceptive
+or difference) and compare it with the already determined hashes. Experimentally, we have determined that two images with a Hamming
+distance of their corresponding hashes less than 19 are similar.\\
+Of course, the search requires a running time of $O(n)$, where $n$ is the number of stored images, which is not good enough for a large
+size of the image set. A further optimization that can reduce the running time of the search is using a locality sensitive hash, but this
+exceeds the desired simplicity of our initial method.\\
+It is worth mentioning that out of the three possible hashes, the best results were obtained with the difference hash, because of its
+small computation time and its accuracy.
+
+
+\section{Related Algorithms}
 
 There are a lot of algorithms which focus on image similarity and key feature detection, and after studying several ones, we decided on focusing on two main ones, the $Harris\ corner\ detector$ and the $Scale\ Invariant$ $Feature\ Transform$. Our choice was determined on the fact we wanted to be able to control the sensitivity of the matches, but also to efficiently distribute the algorithm on several machines for a large input set. \\
 
@@ -648,7 +674,39 @@ The results of this test are shown in the next table:\\
 	max score & 1162618 & 1134470 & 1150899 \\
 \end{tabular}
 
-As it can be seen, the third metric, largest distance from the descriptors of an image to the average of all found descriptors, performs the best out of the three metrics.
+As it can be seen, the third metric, largest distance from the descriptors of an image to the average of all found descriptors, performs the best out of the three metrics.\\
+
+Besides running the algorithm on our similarity sets, we also took some images from our $100.000$ set and used Google Image Search or TinEye to find replicas of those images on the Internet. Then we did a reverse search of those images with our algorithm to see if it finds the original images used in the query.\\
+We had some interesting results, shown in Figure~\ref{fig:example1.1} and Figure~\ref{fig:example2.1}.\\
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=.6\linewidth]{images/fieldSite.png}
+\caption{Image from website}
+\label{fig:example1.1}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=.6\linewidth]{images/field.png}
+\caption{Image from database}
+\label{fig:example1.2}
+\end{figure}
+
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=.4\linewidth]{images/pumpkinSite.png}
+\caption{Image from website}
+\label{fig:example2.1}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=.4\linewidth]{images/pumpkin.png}
+\caption{Image from database}
+\label{fig:example2.2}
+\end{figure}
 
 \subsection{Running Time}
 We have tested our algorithm on a machine with 55GB of RAM, 16 quad-core processors with a frequency of 2.4GHz.
